@@ -131,7 +131,7 @@ MonoBehaviour:
   cameraPivot: {fileID: 0}
   currentMoveStatus: 0
   maxMoveSpeed: 4.5
-  cameraRotateSpeed: 2
+  cameraRotateSpeed: 1
   turnSpeed: 500
   animator: {fileID: 4672680128735717449}
 --- !u!1001 &4672680128735717444
