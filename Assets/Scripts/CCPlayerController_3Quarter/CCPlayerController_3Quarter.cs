@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.InputSystem.InputAction;
+using UnityEngine.Animations;
 
 public class CCPlayerController_3Quarter : MonoBehaviour
 {
@@ -9,15 +11,157 @@ public class CCPlayerController_3Quarter : MonoBehaviour
 
     private string playerDevice;
 
+    public Transform cameraPivot;
+
+    public enum MovementStatus
+    {
+        Idle,
+        Moving,
+        Stopping
+    };
+
+    [HideInInspector]
+    public MovementStatus currentMoveStatus;
+
+    [Header("Max Movement Speed Values")]
+    [Tooltip("The maximum speed of the player")]
+    public float maxMoveSpeed;
+
+    [Header("Camera Control Variables")]
+    public float cameraRotateSpeed;
+
+    [Header("Player Turn Speed")]
+    public float turnSpeed;
+
+    [Header("Player's Animator")]
+    [Tooltip("Found on the Player's mesh object")]
+    public Animator animator;
+
+    //Variable for the Character Controller component on the Player
+    private CharacterController controller;
+
+    //Variable for defining the Current InputVector, and using it to create a Movement Direction
+    private Vector3 moveDirection = Vector3.zero;
+    private Vector2 inputVector = Vector2.zero;
+    private Vector2 cameraInputVector = Vector2.zero;
+
+    //Variable that finds the Camera
+    private Camera levelCamera;
+
     public void Awake()
     {
+        //Finds the PlayerInput component on the Player, without this everything explodes.
         playerInput = GetComponent<PlayerInput>();
+
+        //Gets what device the player is using.
         playerDevice = playerInput.currentControlScheme;
+
+        //Finds the main camera for the level (used for movement context)
+        levelCamera = Camera.main;
+        cameraPivot = levelCamera.transform.parent;
+
+        //Find the CharacterController on the Player
+        controller = GetComponent<CharacterController>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SetInputVector(CallbackContext context)
     {
+        inputVector = context.ReadValue<Vector2>();
+        //Debug.Log("Current Movement InputVector" + inputVector);
+    }
+
+    public void SetCameraInputVector(CallbackContext context)
+    {
+        cameraInputVector = context.ReadValue<Vector2>();
+        Debug.Log("Current Camera InputVector" + cameraInputVector);
+    }
+
+    public void Update()
+    {
+        // *** PLAYER MOVEMENT AND ROTATION *** //
+
+        //Sets the player's horizontal movement direction using the input vector from the Player's Input
+        moveDirection = new Vector3(inputVector.x, 0, inputVector.y);
+
+        //Uses a modified variable of moveDirection to also calculate what direction the player should be facing.
+        var rotationVector = moveDirection;
+        //Adjusts the moveDirectoin based on the angle of the Main Camera.
+        moveDirection = Quaternion.Euler(0, levelCamera.gameObject.transform.eulerAngles.y, 0) * moveDirection;
+
+        //Adjusts the rotationVector based on the angle of the level camera.
+        rotationVector = Quaternion.Euler(0, levelCamera.gameObject.transform.eulerAngles.y, 0) * rotationVector;
         
+        //Gets the final value for use with the TurnPlayer() function.
+        rotationVector *= maxMoveSpeed;
+
+        //Uses one final value, labelled 'rotation' which is reset each time Update() is called to prevent the player from spinning out like a Beyblade.
+        Quaternion rotation = Quaternion.Euler(0, 0, 0);
+        if (rotationVector != Vector3.zero)
+            rotation = Quaternion.LookRotation(rotationVector);
+        
+        //TurnPlayer is only called when there is still new input coming from the player, thus keeping the player from turning back to 0 bearing.
+        if (inputVector != new Vector2(0, 0))
+            TurnPlayer(rotation);
+
+
+        //Updates the state of the Player based on the strength of the InputVector
+        //Firstly, determines if either inputVector.x or .y are negative, and turns them into positives.
+        var inputX = inputVector.x;
+        if (inputX < 0)
+            inputX *= -1;
+
+        var inputY = inputVector.y;
+        if (inputY < 0)
+            inputY *= -1;
+
+        //Secondly, determines whether input X or Y is higher, if they are tied, defaults to X
+        var highestInput = 0f;
+        if (inputX >= inputY)
+            highestInput = inputX;
+        else
+            highestInput = inputY;
+
+        //And Thirdly, uses the higher of the two input values to determine the blend tree's threshold
+        if (currentMoveStatus != MovementStatus.Stopping)
+        {
+            currentMoveStatus = MovementStatus.Moving;
+            animator.SetInteger("MovementState", (int)currentMoveStatus);
+            animator.SetFloat("InputVector", (float)highestInput);
+        }
+
+        //Adds the max move speed value on the player prefab
+        moveDirection *= maxMoveSpeed;
+        //Calls the Move() function on the Character Controller
+        controller.Move(moveDirection * Time.deltaTime);
+
+        //Debug.Log(moveDirection);
+        //Debug.Log(currentMoveStatus);
+
+        // *** CAMERA ROTATION *** //
+
+        cameraPivot.Rotate(new Vector3(0, cameraInputVector.x * cameraRotateSpeed, 0));
+
+        // *** CAMERA ROTATION ENDS *** //
+
+        // *** ANIMATOR STATE SETTINGS *** //
+
+        animator.SetInteger("MovementState", (int)currentMoveStatus);
+
+        //Slows down animation speeds if highestInput is below the threshhold
+        if (highestInput <= 0.5f)
+            animator.speed = highestInput * 2;
+        else
+            animator.speed = 1;
+
+
+
+    }
+
+
+    public void TurnPlayer(Quaternion rotation)
+    {
+        if (currentMoveStatus != MovementStatus.Stopping)
+        //Rotates the Player to face the value of the rotation variable.
+        gameObject.transform.rotation = Quaternion.RotateTowards(gameObject.transform.rotation, rotation, (turnSpeed * Time.deltaTime));
     }
 }
