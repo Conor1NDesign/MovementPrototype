@@ -17,10 +17,11 @@ public class CCPlayerController_3Quarter : MonoBehaviour
     {
         Idle,
         Moving,
+        Falling,
         Stopping
     };
 
-    [HideInInspector]
+    //[HideInInspector]
     public MovementStatus currentMoveStatus;
 
     [Header("Max Movement Speed Values")]
@@ -47,6 +48,19 @@ public class CCPlayerController_3Quarter : MonoBehaviour
 
     //Variable that finds the Camera
     private Camera levelCamera;
+
+    //GRAVITY VARIABLES
+    [Header("Gravity Variables")]
+    [Tooltip("The default strength of gravity, be mindful that the value of Gravity Ramp Up is added to this each frame that the player is falling.")]
+    public float defaultGravityMultiplier;
+    [Tooltip("The maximum strength of gravity. For example: A value of 2 would mean that that the strength can go up to double the Unity default.")]
+    public float maxGravityMultiplier = 2;
+    [Tooltip("The value that gravity increases by each frame that a player is falling. Values above 0.02 can end up looking really goofy, beware.")]
+    public float gravityRampUp;
+    [HideInInspector]
+    public float gravityMultiplier = 0;
+    [HideInInspector]
+    public bool useGravity = true;
 
     public void Awake()
     {
@@ -122,7 +136,7 @@ public class CCPlayerController_3Quarter : MonoBehaviour
             highestInput = inputY;
 
         //And Thirdly, uses the higher of the two input values to determine the blend tree's threshold
-        if (currentMoveStatus != MovementStatus.Stopping)
+        if (currentMoveStatus != MovementStatus.Stopping && currentMoveStatus != MovementStatus.Falling)
         {
             currentMoveStatus = MovementStatus.Moving;
             animator.SetInteger("MovementState", (int)currentMoveStatus);
@@ -131,6 +145,42 @@ public class CCPlayerController_3Quarter : MonoBehaviour
 
         //Adds the max move speed value on the player prefab
         moveDirection *= maxMoveSpeed;
+
+        if (useGravity)
+        {
+            moveDirection += (Physics.gravity * gravityMultiplier) * Time.deltaTime;
+        }
+
+        //Yes officer this line right here
+        if (currentMoveStatus == MovementStatus.Falling)
+        {
+            //A statement to make sure that gravity can't go beyond a maximum value set in the inspector. This is to prevent gravity from reaching an infinite value.
+            if (gravityMultiplier < maxGravityMultiplier)
+            {
+                gravityMultiplier += gravityRampUp;
+            }
+        }
+        else
+        {
+            gravityMultiplier = defaultGravityMultiplier;
+        }
+
+        //State checks
+        if (controller.isGrounded && highestInput > 0)
+        {
+            currentMoveStatus = MovementStatus.Moving;
+        }
+
+        else if (!controller.isGrounded)
+        {
+            currentMoveStatus = MovementStatus.Falling;
+        }
+
+        else
+        {
+            currentMoveStatus = MovementStatus.Idle;
+        }
+
         //Calls the Move() function on the Character Controller
         controller.Move(moveDirection * Time.deltaTime);
 
@@ -152,8 +202,6 @@ public class CCPlayerController_3Quarter : MonoBehaviour
             animator.speed = highestInput * 2;
         else
             animator.speed = 1;
-
-
 
     }
 

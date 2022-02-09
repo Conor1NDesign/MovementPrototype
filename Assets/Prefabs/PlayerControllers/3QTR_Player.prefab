@@ -132,8 +132,13 @@ MonoBehaviour:
   currentMoveStatus: 0
   maxMoveSpeed: 4.5
   cameraRotateSpeed: 1
-  turnSpeed: 500
+  turnSpeed: 1000
   animator: {fileID: 4672680128735717449}
+  defaultGravityMultiplier: 10
+  maxGravityMultiplier: 500
+  gravityRampUp: 2
+  gravityMultiplier: 0
+  useGravity: 1
 --- !u!1001 &4672680128735717444
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,0 +1,54 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class ProcGen_StartPoint : MonoBehaviour
+{
+    private Transform spawnPoint;
+
+    [Header("Map Generation Settings")]
+    [Tooltip("The number of times the Generation Event will run -- ie. The bigger the number, the bigger the map.")]
+    public int generationLoops;
+    [Tooltip("The % Chance of a special tile being selected to spawn instead of a standard one.")]
+    [Range(0, 100)]
+    public float specialTileChance;
+
+
+    public List<GameObject> startingTiles;
+
+    public List<GameObject> standardTiles;
+
+    //public List<GameObject> specialTiles;
+
+    //[HideInInspector]
+    public List<GameObject> connectionPoints;
+
+    public void Awake()
+    {
+        spawnPoint = transform;
+        GenerateStartingTile();
+    }
+
+    public void GenerateStartingTile()
+    {
+        int spawnIndex = Random.Range(0, startingTiles.Count);
+        GameObject chosenStartTile = startingTiles[spawnIndex].gameObject;
+        Instantiate(chosenStartTile, gameObject.transform);
+        GameObject startingTile = GameObject.FindGameObjectWithTag("StartingTile");
+        
+        for (int i = 0; i < startingTile.GetComponent<ProcGen_Tile>().connectionPoints.Count; i++)
+        {
+            Debug.Log(i);
+            connectionPoints.Add(startingTile.GetComponent<ProcGen_Tile>().connectionPoints[i]);
+        }
+        TileGenerationLoop();
+    }
+
+    public void TileGenerationLoop()
+    {
+        for (int i = 0; i < connectionPoints.Count; i++)
+        {
+            connectionPoints[i].GetComponent<ProcGen_ConnectionPoint>().GenerateConnectingTile(gameObject.GetComponent<ProcGen_StartPoint>());
+        }
+    }
+}
