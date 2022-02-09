@@ -46,9 +46,13 @@ public class ProcGen_StartPoint : MonoBehaviour
 
     public void TileGenerationLoop()
     {
-        for (int i = 0; i < connectionPoints.Count; i++)
+        if (generationLoops > 0)
         {
-            connectionPoints[i].GetComponent<ProcGen_ConnectionPoint>().GenerateConnectingTile(gameObject.GetComponent<ProcGen_StartPoint>());
+            for (int i = 0; i < connectionPoints.Count; i++)
+            {
+                connectionPoints[i].GetComponent<ProcGen_ConnectionPoint>().GenerateConnectingTile(gameObject.GetComponent<ProcGen_StartPoint>());
+            }
+            generationLoops--;
         }
     }
 }
