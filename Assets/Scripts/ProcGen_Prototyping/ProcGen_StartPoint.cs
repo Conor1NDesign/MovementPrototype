@@ -23,6 +23,8 @@ public class ProcGen_StartPoint : MonoBehaviour
     //[HideInInspector]
     public List<GameObject> connectionPoints;
 
+    private bool firstGenerationLoop = true;
+
     public void Awake()
     {
         spawnPoint = transform;
@@ -38,7 +40,6 @@ public class ProcGen_StartPoint : MonoBehaviour
         
         for (int i = 0; i < startingTile.GetComponent<ProcGen_Tile>().connectionPoints.Count; i++)
         {
-            Debug.Log(i);
             connectionPoints.Add(startingTile.GetComponent<ProcGen_Tile>().connectionPoints[i]);
         }
         TileGenerationLoop();
@@ -55,6 +56,27 @@ public class ProcGen_StartPoint : MonoBehaviour
                 connectionPoints[i].GetComponent<ProcGen_ConnectionPoint>().GenerateConnectingTile(gameObject.GetComponent<ProcGen_StartPoint>());
             }
             generationLoops--;
+
+            if (!firstGenerationLoop)
+                GenerateCPList();
+
+            firstGenerationLoop = false;
+            TileGenerationLoop();
+        }
+        else if (generationLoops <= 0)
+        {
+            return;
+        }
+    }
+
+    public void GenerateCPList()
+    {
+        Debug.Log("Attempting to generate new list of Connection Points");
+        connectionPoints = new List<GameObject>();
+
+        for (int i = 0; i < GameObject.FindGameObjectsWithTag("Connector").Length; i++)
+        {
+            connectionPoints.Add(GameObject.FindGameObjectsWithTag("Connector")[i]);
         }
     }
 }

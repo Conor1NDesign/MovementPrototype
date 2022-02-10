@@ -35,51 +35,62 @@ public class ProcGen_ConnectionPoint : MonoBehaviour
         //Chooses a random prefab from the standard tile list
         int listSelectionNumber = Random.Range(0, startTile.standardTiles.Count);
         GameObject tileToSpawn = startTile.standardTiles[listSelectionNumber];
-        Debug.Log("Selected tile " + tileToSpawn + " will be spawned at " + transform.position);
+        //Debug.Log("Selected tile " + tileToSpawn + " will be spawned at " + transform.position);
+
+        //Spawns the selected tile in
+        //Debug.Log("Generating " + tileToSpawn + " at " + transform.position);
+        GameObject spawnedTile = Instantiate(tileToSpawn, startTile.transform);
+
 
         //Checks each connector on the tile for the first matching connection point
-        for (int i = 0; i < tileToSpawn.GetComponent<ProcGen_Tile>().connectionPoints.Count; i++)
+        for (int i = 0; i < spawnedTile.GetComponent<ProcGen_Tile>().connectionPoints.Count; i++)
         {
-            ProcGen_ConnectionPoint connectionPoint = tileToSpawn.GetComponent<ProcGen_Tile>().connectionPoints[i].GetComponent<ProcGen_ConnectionPoint>();
+            //Views the potential connection point within a variable.
+            ProcGen_ConnectionPoint connectionPoint = spawnedTile.GetComponent<ProcGen_Tile>().connectionPoints[i].GetComponent<ProcGen_ConnectionPoint>();
 
             //Checks if the Connector matches the Type (Horizontal or Vertical) and is opposite to the connection side (Left/Right or Top/Bottom)
             if (connectionPoint.connectionSide != connectionSide && connectionPoint.connectionType == connectionType)
             {
-                //Spawns the selected tile in
-                Debug.Log("Generating " + tileToSpawn + " at " + transform.position);
-                GameObject spawnedTile = Instantiate(tileToSpawn, startTile.transform);
+                spawnedTile.GetComponent<ProcGen_Tile>().whoSpawnedMe = gameObject;
 
                 //Moves the spawaned tile to the position of this connector
                 spawnedTile.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, 0);
 
-                Vector3 connectionOffset = new Vector3(connectionPoint.gameObject.transform.position.x, connectionPoint.gameObject.transform.position.y, 0);
+                //Offsets the tile based on the tile's compatible connector -- This should mean that the two connection points share the same transform position.
+                Vector3 connectionOffset = new Vector3(connectionPoint.gameObject.transform.localPosition.x, connectionPoint.gameObject.transform.localPosition.y, 0);
                 spawnedTile.transform.position -= connectionOffset;
+                Destroy(connectionPoint);
+                Destroy(gameObject);
                 break;
             }
             else
             {
-                Debug.Log(connectionPoint + " was unsuitable for connection");
-                if (generationRetryAttempts > 0 && i == tileToSpawn.GetComponent<ProcGen_Tile>().connectionPoints.Count - 1)
+                //Debug.Log(connectionPoint + " was unsuitable for connection");
+                if (generationRetryAttempts > 0 && i == spawnedTile.GetComponent<ProcGen_Tile>().connectionPoints.Count - 1)
                 {
+                    Debug.Log("Destroying " + spawnedTile);
+                    Destroy(spawnedTile);
                     retryingGeneration = true;
-                    generationRetryAttempts--;
                 }
-                else if (generationRetryAttempts == 0)
+                else if (generationRetryAttempts <= 0)
                 {
                     Debug.Log("Retry attempts for " + gameObject + " have been exhausted, activating blocker instead");
+                    Destroy(spawnedTile);
                     blocker.SetActive(true);
+                    Destroy(gameObject);
                 }
             }
         }
         
         if (retryingGeneration)
         {
-            Debug.Log("Retrying Tile Selection and Generation for " + gameObject);
+            //Debug.Log("Retrying Tile Selection and Generation for " + gameObject);
+            generationRetryAttempts--;
             GenerateConnectingTile(startTile);
         }
         else
         {
-            Debug.Log("Finished generation task for " + gameObject);
+            //Debug.Log("Finished generation task for " + gameObject);
         }
     }
 }

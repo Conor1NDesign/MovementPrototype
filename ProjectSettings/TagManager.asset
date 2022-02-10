@@ -8,6 +8,7 @@ TagManager:
   - StartingPoint
   - Tile
   - StartingTile
+  - OverlapChecker
   layers:
   - Default
   - TransparentFX

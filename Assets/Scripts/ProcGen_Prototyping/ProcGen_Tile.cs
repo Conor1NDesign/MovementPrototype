@@ -6,10 +6,37 @@ public class ProcGen_Tile : MonoBehaviour
 {
     public List<GameObject> connectionPoints;
 
-    public Collider antiOverlapTrigger;
+    public GameObject antiOverlapTrigger;
+
+    //[HideInInspector]
+    public GameObject whoSpawnedMe;
 
     public void Awake()
     {
-        antiOverlapTrigger = GetComponent<BoxCollider>();
+        if (antiOverlapTrigger == null)
+        {
+            Debug.LogError("The tile named '" + gameObject + "' is missing an anti-overlap trigger, please add one to the prefab before attempting to generate a map.");
+        }
+        else
+        {
+            bool overlapping = false;
+            antiOverlapTrigger.GetComponent<ProcGen_OverlapChecker>().CheckForOverlap(overlapping);
+
+            if (overlapping)
+            {
+                RetryGeneration();
+            }
+        }
+    }
+
+    public void RetryGeneration()
+    {
+        //Re-attempt tile generation
+        GameObject startingTile = GameObject.FindGameObjectWithTag("StartingPoint");
+        whoSpawnedMe.GetComponent<ProcGen_ConnectionPoint>().generationRetryAttempts--;
+        whoSpawnedMe.GetComponent<ProcGen_ConnectionPoint>().GenerateConnectingTile(startingTile.GetComponent<ProcGen_StartPoint>());
+
+        //I am kill :(
+        Destroy(gameObject);
     }
 }
