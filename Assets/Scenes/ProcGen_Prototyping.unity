@@ -171,7 +171,6 @@ MonoBehaviour:
   specialTileChance: 10
   startingTiles:
   - {fileID: 6190996454063149333, guid: 36e2bb4eb7227584cb1b0c94214ad77a, type: 3}
-  - {fileID: 3557480366060205848, guid: bba75b02573623d4c9db49713fcb5b6a, type: 3}
   - {fileID: 7741866577708266724, guid: e8bc1be20f448e648a36de23bba04b93, type: 3}
   standardTiles:
   - {fileID: 2942269281240962398, guid: 233c404f446a9e644a6517574698de03, type: 3}
@@ -180,7 +179,6 @@ MonoBehaviour:
   - {fileID: 5777783813566403302, guid: 3d46e1c6771d4ea48a496e270b1d782d, type: 3}
   - {fileID: 7623258148556663914, guid: a38fd6294c2893c4e97e5aec1a4875e2, type: 3}
   - {fileID: 4311874301169189684, guid: d0a7604105bb9244fa9131e78b3fa8be, type: 3}
-  specialTiles: []
   connectionPoints: []
 --- !u!1 &992437233
 GameObject:

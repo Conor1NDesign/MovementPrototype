@@ -48,8 +48,10 @@ public class ProcGen_StartPoint : MonoBehaviour
     {
         if (generationLoops > 0)
         {
+            Debug.Log("Number of CPs to generate tiles for is: " + connectionPoints.Count);
             for (int i = 0; i < connectionPoints.Count; i++)
             {
+                Debug.Log("Generating tile for Connection Point " + connectionPoints[i]);
                 connectionPoints[i].GetComponent<ProcGen_ConnectionPoint>().GenerateConnectingTile(gameObject.GetComponent<ProcGen_StartPoint>());
             }
             generationLoops--;

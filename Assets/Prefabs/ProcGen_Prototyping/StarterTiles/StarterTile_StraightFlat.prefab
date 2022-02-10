@@ -1609,6 +1609,11 @@ PrefabInstance:
       propertyPath: blocker
       value: 
       objectReference: {fileID: 6190996454086953565}
+    - target: {fileID: 211538190580251218, guid: 1300d869d54c9604dafe03942d78d564,
+        type: 3}
+      propertyPath: connectionSide
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1612167402139615252, guid: 1300d869d54c9604dafe03942d78d564,
         type: 3}
       propertyPath: m_Name
