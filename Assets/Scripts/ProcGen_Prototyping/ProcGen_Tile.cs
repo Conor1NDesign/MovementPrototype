@@ -17,20 +17,13 @@ public class ProcGen_Tile : MonoBehaviour
         {
             Debug.LogError("The tile named '" + gameObject + "' is missing an anti-overlap trigger, please add one to the prefab before attempting to generate a map.");
         }
-        else
-        {
-            bool overlapping = false;
-            antiOverlapTrigger.GetComponent<ProcGen_OverlapChecker>().CheckForOverlap(overlapping);
-
-            if (overlapping)
-            {
-                RetryGeneration();
-            }
-        }
     }
 
     public void RetryGeneration()
     {
+        //Disables this tile's overlap trigger to prevent it from instantly triggering the new tile
+        antiOverlapTrigger.SetActive(false);
+
         //Re-attempt tile generation
         GameObject startingTile = GameObject.FindGameObjectWithTag("StartingPoint");
         whoSpawnedMe.GetComponent<ProcGen_ConnectionPoint>().generationRetryAttempts--;

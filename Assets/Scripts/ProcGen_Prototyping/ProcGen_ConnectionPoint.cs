@@ -59,9 +59,26 @@ public class ProcGen_ConnectionPoint : MonoBehaviour
                 //Offsets the tile based on the tile's compatible connector -- This should mean that the two connection points share the same transform position.
                 Vector3 connectionOffset = new Vector3(connectionPoint.gameObject.transform.localPosition.x, connectionPoint.gameObject.transform.localPosition.y, 0);
                 spawnedTile.transform.position -= connectionOffset;
-                Destroy(connectionPoint);
-                Destroy(gameObject);
-                break;
+
+                //Calls the OverlapChecker object on the spawned tile to confirm that the tile isn't overlapping with another already established one
+                bool isOverlapping = false;
+                StartCoroutine(spawnedTile.GetComponent<ProcGen_Tile>().antiOverlapTrigger.GetComponent<ProcGen_OverlapChecker>().GenerationDelay(isOverlapping));
+
+                //Completes the generation of the tile, provided the overlap check returned false
+                if (!isOverlapping)
+                {
+                    //Adds the spawned tile to the list of active tiles in the scene, this is the last step in confirming this tile's position.
+                    startTile.activeTiles.Add(spawnedTile);
+
+                    Destroy(connectionPoint.gameObject);
+                    Destroy(gameObject);
+                    break;
+                }
+                //If there was an overlap detected, calls for the generation to be retried (provided the connector hasn't expended it's retry capacity already)
+                else
+                {
+                    spawnedTile.GetComponent<ProcGen_Tile>().RetryGeneration();
+                }
             }
             else
             {

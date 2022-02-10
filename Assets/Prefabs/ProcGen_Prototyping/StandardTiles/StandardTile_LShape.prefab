@@ -75,6 +75,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b579dea8a9349ac458b8f6d5af44822c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clearGeneration: 0
 --- !u!1 &2449354588129278951
 GameObject:
   m_ObjectHideFlags: 0
@@ -2796,7 +2797,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 777
+  m_VersionIndex: 780
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -3140,7 +3141,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 1250
+  m_VersionIndex: 1253
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []

@@ -23,7 +23,8 @@ public class ProcGen_StartPoint : MonoBehaviour
     //[HideInInspector]
     public List<GameObject> connectionPoints;
 
-    private bool firstGenerationLoop = true;
+    //[HideInInspector]
+    public List<GameObject> activeTiles;
 
     public void Awake()
     {
@@ -49,6 +50,11 @@ public class ProcGen_StartPoint : MonoBehaviour
     {
         if (generationLoops > 0)
         {
+            for (int i = 0; i < activeTiles.Count; i++)
+            {
+                activeTiles[i].GetComponent<ProcGen_Tile>().antiOverlapTrigger.GetComponent<ProcGen_OverlapChecker>().clearGeneration = true;
+            }
+
             Debug.Log("Number of CPs to generate tiles for is: " + connectionPoints.Count);
             for (int i = 0; i < connectionPoints.Count; i++)
             {
@@ -57,10 +63,8 @@ public class ProcGen_StartPoint : MonoBehaviour
             }
             generationLoops--;
 
-            if (!firstGenerationLoop)
-                GenerateCPList();
+            GenerateCPList();
 
-            firstGenerationLoop = false;
             TileGenerationLoop();
         }
         else if (generationLoops <= 0)
@@ -72,7 +76,8 @@ public class ProcGen_StartPoint : MonoBehaviour
     public void GenerateCPList()
     {
         Debug.Log("Attempting to generate new list of Connection Points");
-        connectionPoints = new List<GameObject>();
+        connectionPoints = new List<GameObject>(0);
+        connectionPoints.Clear();
 
         for (int i = 0; i < GameObject.FindGameObjectsWithTag("Connector").Length; i++)
         {
