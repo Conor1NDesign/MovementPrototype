@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class ProcGen_StartPoint : MonoBehaviour
 {
-    private Transform spawnPoint;
-
     [Header("Map Generation Settings")]
     [Tooltip("The number of times the Generation Event will run -- ie. The bigger the number, the bigger the map.")]
     public int generationLoops;
@@ -26,18 +24,19 @@ public class ProcGen_StartPoint : MonoBehaviour
     //[HideInInspector]
     public List<GameObject> activeTiles;
 
+    //[HideInInspector]
+    public ProcGen_StartPoint self;
+
     public void Awake()
     {
-        spawnPoint = transform;
+        self = gameObject.GetComponent<ProcGen_StartPoint>();
         GenerateStartingTile();
     }
 
     public void GenerateStartingTile()
     {
         int spawnIndex = Random.Range(0, startingTiles.Count);
-        GameObject chosenStartTile = startingTiles[spawnIndex].gameObject;
-        Instantiate(chosenStartTile, gameObject.transform);
-        GameObject startingTile = GameObject.FindGameObjectWithTag("StartingTile");
+        GameObject startingTile = Instantiate(startingTiles[spawnIndex].gameObject, gameObject.transform);
         
         for (int i = 0; i < startingTile.GetComponent<ProcGen_Tile>().connectionPoints.Count; i++)
         {
@@ -48,27 +47,42 @@ public class ProcGen_StartPoint : MonoBehaviour
 
     public void TileGenerationLoop()
     {
+        Debug.Log("Number of CPs to generate tiles for is: " + connectionPoints.Count);
+        for (int i = 0; i < connectionPoints.Count; i++)
+        {
+            Debug.Log("Generating tile for Connection Point " + connectionPoints[i]);
+            connectionPoints[i].GetComponent<ProcGen_ConnectionPoint>().StartGeneration(self);
+        }
+
+        Invoke("CompleteGenerationLoop", 0.3f);
+    }
+
+    public void CompleteGenerationLoop()
+    {
+        generationLoops--;
+
         if (generationLoops > 0)
         {
-            for (int i = 0; i < activeTiles.Count; i++)
-            {
-                activeTiles[i].GetComponent<ProcGen_Tile>().antiOverlapTrigger.GetComponent<ProcGen_OverlapChecker>().clearGeneration = true;
-            }
+            Invoke("GenerateCPList", 0.1f);
 
-            Debug.Log("Number of CPs to generate tiles for is: " + connectionPoints.Count);
-            for (int i = 0; i < connectionPoints.Count; i++)
-            {
-                Debug.Log("Generating tile for Connection Point " + connectionPoints[i]);
-                connectionPoints[i].GetComponent<ProcGen_ConnectionPoint>().GenerateConnectingTile(gameObject.GetComponent<ProcGen_StartPoint>());
-            }
-            generationLoops--;
-
-            GenerateCPList();
-
-            TileGenerationLoop();
+            Debug.Log("Continuing tile generation loop. Loops remaining is: " + generationLoops);
+            Invoke("TileGenerationLoop", 0.2f);
         }
         else if (generationLoops <= 0)
         {
+            Debug.Log("Generation loops have been exhausted, finalizing map now...");
+
+            //Before the generation is totally finished, regenerates the CP list one more time, then activates blockers on all of them
+            //This should prevent any open spaces in the map where players can fall out
+            GenerateCPList();
+
+            for (int i = 0; i < connectionPoints.Count; i++)
+            {
+                connectionPoints[i].GetComponent<ProcGen_ConnectionPoint>().blocker.SetActive(true);
+                Destroy(connectionPoints[i]);
+            }
+
+            //If you want things to spawn on the map after the layout has been generated, start new code from here
             return;
         }
     }
@@ -76,11 +90,12 @@ public class ProcGen_StartPoint : MonoBehaviour
     public void GenerateCPList()
     {
         Debug.Log("Attempting to generate new list of Connection Points");
+        connectionPoints.Clear(); //Both these lines should do the same thing, but I was experiencing some weird issue where the list wouldn't actually empty itself w/out them
         connectionPoints = new List<GameObject>(0);
-        connectionPoints.Clear();
 
         for (int i = 0; i < GameObject.FindGameObjectsWithTag("Connector").Length; i++)
         {
+            Debug.Log("Adding new connector to list " + GameObject.FindGameObjectsWithTag("Connector")[i]);
             connectionPoints.Add(GameObject.FindGameObjectsWithTag("Connector")[i]);
         }
     }

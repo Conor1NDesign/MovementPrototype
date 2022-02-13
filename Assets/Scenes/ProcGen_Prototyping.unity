@@ -167,7 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e7c6fc3c6c0c54e956ac13f133df66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  generationLoops: 2
+  generationLoops: 5
   specialTileChance: 10
   startingTiles:
   - {fileID: 6190996454063149333, guid: 36e2bb4eb7227584cb1b0c94214ad77a, type: 3}
@@ -181,6 +181,8 @@ MonoBehaviour:
   - {fileID: 7623258148556663914, guid: a38fd6294c2893c4e97e5aec1a4875e2, type: 3}
   - {fileID: 4311874301169189684, guid: d0a7604105bb9244fa9131e78b3fa8be, type: 3}
   connectionPoints: []
+  activeTiles: []
+  self: {fileID: 0}
 --- !u!1 &992437233
 GameObject:
   m_ObjectHideFlags: 0

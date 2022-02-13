@@ -75,6 +75,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b579dea8a9349ac458b8f6d5af44822c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isOverlapping: 0
 --- !u!1 &6190996452958938405
 GameObject:
   m_ObjectHideFlags: 0
@@ -1329,7 +1330,6 @@ MonoBehaviour:
   - {fileID: 8978835795602429070}
   - {fileID: 4878884716511445796}
   antiOverlapTrigger: {fileID: 3866514726411309970}
-  whoSpawnedMe: {fileID: 0}
 --- !u!1 &6190996454086953565
 GameObject:
   m_ObjectHideFlags: 0
@@ -1578,7 +1578,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 771
+  m_VersionIndex: 774
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []

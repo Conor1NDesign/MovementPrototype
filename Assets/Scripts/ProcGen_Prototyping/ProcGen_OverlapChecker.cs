@@ -6,31 +6,34 @@ public class ProcGen_OverlapChecker : MonoBehaviour
 {
     [HideInInspector]
     public bool isOverlapping = false;
-    [HideInInspector]
-    public bool clearGeneration = false;
 
     public void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "OverlapChecker" && !clearGeneration)
+        if (other.tag == "OverlapChecker")
         {
-            Debug.Log("Tile Collision Detected!");
+            Debug.Log("Tile Collision Detected at (" + transform.position + ")");
             isOverlapping = true;
         }
     }
 
-    //Look, I know this is messy. But it's 1am and the only way I can think of making the generation just wait a fucking second and make sure there's no tile overlapping going on.
-    public IEnumerator GenerationDelay(bool overlapping)
+    public void OnTriggerExit(Collider other)
     {
-        Debug.Log("YES SIR THE COROUTINE IS STARTING");
-        yield return new WaitForSeconds(5);
-        Debug.Log("WHAT THE FUCK WHY WON'T YOU WORK DICKHEAD");
+        Debug.Log("Tile moved out of overlapping position");
+        isOverlapping = false;
+    }
+
+    public void CheckForOverlap(GameObject whoSpawnedMe)
+    {
+        Debug.Log("CHECKING FOR OVERLAP");
+
+        //Re-attempts tile selection if there was an overlap
         if (isOverlapping)
         {
-            yield return true;
+            whoSpawnedMe.GetComponent<ProcGen_ConnectionPoint>().RetryGeneration();
         }
-        else
+        else //Generation for this tile should be completed
         {
-            yield return false;
+            whoSpawnedMe.GetComponent<ProcGen_ConnectionPoint>().CompleteGeneration();
         }
     }
 }

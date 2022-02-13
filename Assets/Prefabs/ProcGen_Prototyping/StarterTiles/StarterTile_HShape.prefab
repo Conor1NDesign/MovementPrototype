@@ -4348,7 +4348,6 @@ MonoBehaviour:
   - {fileID: 7583214247435268252}
   - {fileID: 3692113277095119895}
   antiOverlapTrigger: {fileID: 7655025174633732571}
-  whoSpawnedMe: {fileID: 0}
 --- !u!1 &3683019073354872812
 GameObject:
   m_ObjectHideFlags: 0
@@ -4804,6 +4803,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b579dea8a9349ac458b8f6d5af44822c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isOverlapping: 0
 --- !u!1 &7784504955380919852
 GameObject:
   m_ObjectHideFlags: 0
@@ -5755,6 +5755,11 @@ PrefabInstance:
       propertyPath: blocker
       value: 
       objectReference: {fileID: 2162864826945216692}
+    - target: {fileID: 211538190580251218, guid: 1300d869d54c9604dafe03942d78d564,
+        type: 3}
+      propertyPath: connectionSide
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1612167402139615252, guid: 1300d869d54c9604dafe03942d78d564,
         type: 3}
       propertyPath: m_Name
