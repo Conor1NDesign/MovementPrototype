@@ -54,7 +54,7 @@ public class ProcGen_StartPoint : MonoBehaviour
             connectionPoints[i].GetComponent<ProcGen_ConnectionPoint>().StartGeneration(self);
         }
 
-        Invoke("CompleteGenerationLoop", 0.3f);
+        Invoke("CompleteGenerationLoop", 0.1f);
     }
 
     public void CompleteGenerationLoop()
@@ -63,10 +63,10 @@ public class ProcGen_StartPoint : MonoBehaviour
 
         if (generationLoops > 0)
         {
-            Invoke("GenerateCPList", 0.1f);
+            Invoke("GenerateCPList", 0.03f);
 
             Debug.Log("Continuing tile generation loop. Loops remaining is: " + generationLoops);
-            Invoke("TileGenerationLoop", 0.2f);
+            Invoke("TileGenerationLoop", 0.06f);
         }
         else if (generationLoops <= 0)
         {

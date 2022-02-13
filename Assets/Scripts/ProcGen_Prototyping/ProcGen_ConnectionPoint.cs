@@ -6,7 +6,7 @@ public class ProcGen_ConnectionPoint : MonoBehaviour
 {
     public int generationRetryAttempts;
 
-    public float timeDelay = 0.1f;
+    public float timeDelay = 0.03f;
 
     //[HideInInspector]
     public GameObject spawnedTile;

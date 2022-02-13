@@ -167,7 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e7c6fc3c6c0c54e956ac13f133df66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  generationLoops: 5
+  generationLoops: 6
   specialTileChance: 10
   startingTiles:
   - {fileID: 6190996454063149333, guid: 36e2bb4eb7227584cb1b0c94214ad77a, type: 3}
