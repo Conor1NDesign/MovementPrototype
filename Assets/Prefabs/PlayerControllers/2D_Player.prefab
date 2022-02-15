@@ -83,22 +83,6 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: -698756164488744119}
         m_TargetAssemblyTypeName: CCPlayerController_2D, Assembly-CSharp
-        m_MethodName: SetCameraInputVector
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 62355399-36db-408b-bb04-139e296faa5f
-    m_ActionName: CCPC_3Q_Default/CameraRotation[/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: -698756164488744119}
-        m_TargetAssemblyTypeName: CCPlayerController_2D, Assembly-CSharp
         m_MethodName: OnJumpAction
         m_Mode: 0
         m_Arguments:
@@ -162,19 +146,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9451e833c31d954aa28d9b473873310, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraPivot: {fileID: 0}
   currentMoveStatus: 0
-  maxMoveSpeed: 4.5
-  jumpForce: 5
+  maxMoveSpeed: 8
+  jumpForce: 16
   currentJumpVector: 0
-  cameraRotateSpeed: 1
+  inertiaSpeed: 0.035
   turnSpeed: 1000
   animator: {fileID: 4672680128735717449}
-  defaultGravityMultiplier: 10
-  maxGravityMultiplier: 500
-  gravityRampUp: 2
+  cameraToSpawn: {fileID: 7697245031415661419, guid: fde466d6b7f640349976ca5bf2d24d29,
+    type: 3}
+  defaultGravityMultiplier: 0.05
+  maxGravityMultiplier: 2
+  gravityRampUp: 0.025
   gravityMultiplier: 0
-  useGravity: 1
   knockbackStrength: 0
   stunLength: 2
   playerTargets: []
